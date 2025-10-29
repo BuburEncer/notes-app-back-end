@@ -11,6 +11,7 @@
     "no-console": "off",
     "quotes": "off",
     "no-unused-vars": "off",
-    "linebreak-style": "off"
+    "linebreak-style": "off",
+    "no-underscore-dangle": "off"
   }
 }
