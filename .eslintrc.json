@@ -12,6 +12,10 @@
     "quotes": "off",
     "no-unused-vars": "off",
     "linebreak-style": "off",
-    "no-underscore-dangle": "off"
+    "no-underscore-dangle": "off",
+    "spaced-comment": "off",
+    "camelcase": "off",
+    "object-curly-newline": "off",
+    "no-undef": "off"
   }
 }
