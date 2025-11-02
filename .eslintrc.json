@@ -16,6 +16,8 @@
     "spaced-comment": "off",
     "camelcase": "off",
     "object-curly-newline": "off",
-    "no-undef": "off"
+    "no-undef": "off",
+    "no-extraneous-dependencies": "off",
+    "no-unresolved": "off"
   }
 }
