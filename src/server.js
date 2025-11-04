@@ -1,21 +1,24 @@
+// mengimpor dotenv dan menjalankan konfigurasinya
 require("dotenv").config();
+
 const Hapi = require("@hapi/hapi");
 const Jwt = require("@hapi/jwt");
 
-//notes
+// notes
 const notes = require("./api/notes");
 const NotesService = require("./services/postgres/NotesService");
-const NotesValidator = require("./validator/notes/index");
+const NotesValidator = require("./validator/notes");
+const ClientError = require("./exception/ClientError");
 
-//users
+// users
 const users = require("./api/users");
 const UsersService = require("./services/postgres/UsersService");
-const UsersValidator = require("./validator/users/index");
+const UsersValidator = require("./validator/users");
 
-//authentications
+// authentications
 const authentications = require("./api/authentications");
 const AuthenticationsService = require("./services/postgres/AuthenticationsService");
-const TokenManager = require("./api/tokenize/TokenManager");
+const TokenManager = require("./tokenize/TokenManager");
 const AuthenticationsValidator = require("./validator/authentications");
 
 const init = async () => {
@@ -34,9 +37,11 @@ const init = async () => {
   });
 
   // registrasi plugin eksternal
-  await server.register({
-    plugin: Jwt,
-  });
+  await server.register([
+    {
+      plugin: Jwt,
+    },
+  ]);
 
   // mendefinisikan strategy autentikasi jwt
   server.auth.strategy("notesapp_jwt", "jwt", {
@@ -80,6 +85,23 @@ const init = async () => {
       },
     },
   ]);
+
+  server.ext("onPreResponse", (request, h) => {
+    // mendapatkan konteks response dari request
+    const { response } = request;
+
+    // penanganan client error secara internal.
+    if (response instanceof ClientError) {
+      const newResponse = h.response({
+        status: "fail",
+        message: response.message,
+      });
+      newResponse.code(response.statusCode);
+      return newResponse;
+    }
+
+    return h.continue;
+  });
 
   await server.start();
   console.log(`Server berjalan pada ${server.info.uri}`);
